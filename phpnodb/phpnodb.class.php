@@ -23,6 +23,7 @@ limitations under the License.
  * @copyright 2022
  */
 
+declare(strict_types=1); # set strict types
 
 class phpnodb
 {
@@ -94,7 +95,7 @@ class phpnodb
         // input data  through array
         $array = array(
             "data" => $data,
-            "CheckSum" => "{$checksum}"
+            "CheckSum" => "$checksum"
         );
 
         // encode array to json
@@ -120,7 +121,7 @@ class phpnodb
      * @param string $encryptedString
      * @return string
      */
-    private static function decryptData(string $encryptedString)
+    private static function decryptData(string $encryptedString): string
     {
         return $encryptedString; //TODO:: fix this to make it decrypt.
     }
@@ -130,18 +131,18 @@ class phpnodb
      * @param string $rawfiledata
      * @return string
      */
-    private static function encryptDate(string $rawfiledata)
+    private static function encryptDate(string $rawfiledata): string
     {
         return $rawfiledata; // TODO:: fix this so we can encrypt
     }
 
     /**
-     * Enables db in read mode. this can not be writen to
+     * Enables db in read mode. this can not be written to
      * @return $this
      */
-    public function enableReads()
+    public function enableReads(): phpnodb
     {
-        if ($this->readOnly == false) {
+        if (!$this->readOnly) {
             $this->readOnly = true;
         }
 
@@ -153,7 +154,7 @@ class phpnodb
      * Enabled the DB to be written to a file
      * @return $this
      */
-    public function enableWrites()
+    public function enableWrites(): phpnodb
     {
         if ($this->readOnly) {
             $this->readOnly = false;
@@ -167,7 +168,7 @@ class phpnodb
      * sets value in DB. throws exception if db in readonly mode
      * @throws dbexception
      */
-    public function set($key, $value)
+    public function set($key, $value): bool
     {
         if ($this->readOnly) {
             throw new dbexception("The db is currently in readonly mode.", 3);
@@ -194,7 +195,7 @@ class phpnodb
         return $this->data[$key];
     }
 
-    public function delete($key)
+    public function delete($key): bool
     {
         if (!$this->readOnly) {
             if (isset($this->data[$key])) {
@@ -217,11 +218,11 @@ class phpnodb
     }
 
     /**
-     * commits the changes to the dbfile
+     * commits the changes to the db-file
      * @return false
      * @throws dbexception
      */
-    public function commit()
+    public function commit(): bool
     {
         if (!$this->readOnly) {
             $commit = $this->genfile($this->filename, $this->data, $this->checksum);
@@ -241,7 +242,7 @@ class phpnodb
      * if not false. if yes then true
      * @return boolean
      */
-    private function checkChanges()
+    private function checkChanges(): bool
     {
         return $this->changed;
     }
